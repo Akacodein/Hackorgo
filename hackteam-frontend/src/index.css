@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  
+  --color-bg: #f6f7fb;
+  
+  --color-surface: #ffffff;
+  --color-ink: #191a23;
+  --color-ink-soft: #5b5d6e;
+  --color-border: #e4e6ef;
+
+  --color-brand: #7BC950;
+  {/*--color-brand: #4f3df5;*/}
+  --color-brand-ink: #ffffff;
+
+  --color-tier-college: #0e9f6e;
+  --color-tier-college-soft: #e3f7ef;
+  --color-tier-city: #e2932a;
+  --color-tier-city-soft: #fbf0dd;
+  --color-tier-far: #8b93a7;
+  --color-tier-far-soft: #eceef3;
+
+  --color-match: #ff5d73;
+  --color-match-2: #ff9364;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-tag {
+  font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

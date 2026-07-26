@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled connection (PgBouncer via Neon's "-pooler" host) for the app
+  // at runtime — required so serverless functions don't exhaust Postgres'
+  // connection limit. Prisma CLI commands (migrate, studio) should use
+  // DIRECT_URL instead, which points at the unpooled host.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------- Auth (NextAuth / Auth.js v5 + PrismaAdapter standard shape) ----------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+
+  college   College? @relation(fields: [collegeId], references: [id])
+  collegeId String?
+  city      String?
+  state     String?
+  lat       Float?
+  lng       Float?
+
+  skills     String[] @default([])
+  githubUrl  String?
+  linkedinUrl String?
+  bio        String?
+
+  accounts       Account[]
+  sessions       Session[]
+  participations Participation[]
+  swipesMade     EventSwipe[]     @relation("SwipesMade")
+  swipesReceived EventSwipe[]     @relation("SwipesReceived")
+  teamRequests   TeamRequest[]
+
+  createdAt DateTime @default(now())
+
+  @@index([collegeId])
+  @@index([city])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Kept for PrismaAdapter compatibility (magic-link style verification).
+// Our own OTP flow uses VerificationCode below instead.
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Our custom email OTP flow, checked by the Credentials provider in auth.ts
+model VerificationCode {
+  id         String   @id @default(cuid())
+  email      String
+  codeHash   String
+  attempts   Int      @default(0)
+  consumed   Boolean  @default(false)
+  lastSentAt DateTime @default(now())
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([email])
+}
+
+// ---------- Colleges (canonical list, avoids "IIT KGP" vs "IIT Kharagpur" drift) ----------
+
+model College {
+  id    String  @id @default(cuid())
+  name  String  @unique
+  city  String
+  state String
+  lat   Float
+  lng   Float
+  users User[]
+}
+
+// ---------- Events, sourced from many enrollment platforms ----------
+
+model Platform {
+  id     String @id @default(cuid())
+  name   String @unique // "Unstop", "Hack2Skill", "HackQuest"...
+  domain String
+
+  eventLinks     EventLink[]
+  participations Participation[]
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  canonicalName String
+  organizer     String
+  type          String // hackathon | quiz | case-comp | scholarship...
+  mode          String // online | offline | hybrid
+  startDate     DateTime?
+  tags          String[] @default([])
+
+  links          EventLink[]
+  participations Participation[]
+  swipes         EventSwipe[]
+  matches        Match[]
+  teams          Team[]
+}
+
+// Same real-world event, listed on multiple platforms
+model EventLink {
+  id         String @id @default(cuid())
+  eventId    String
+  platformId String
+  sourceUrl  String
+
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  platform Platform @relation(fields: [platformId], references: [id])
+
+  @@unique([eventId, platformId])
+}
+
+model Participation {
+  id         String   @id @default(cuid())
+  userId     String
+  eventId    String
+  platformId String?
+  status     String // "interested" | "registered"
+  source     String // "manual" | "email" | "extension"
+  verified   Boolean  @default(false)
+  visibility String   @default("college") // "public" | "college" | "private"
+  lookingFor String[] @default([]) // skills they want in a teammate, for THIS event
+  createdAt  DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event    Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  platform Platform? @relation(fields: [platformId], references: [id])
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+}
+
+// ---------- Swiping + matching ----------
+
+model EventSwipe {
+  id        String   @id @default(cuid())
+  eventId   String
+  swiperId  String
+  swipedId  String
+  direction String // "left" | "right"
+  createdAt DateTime @default(now())
+
+  event  Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  swiper User  @relation("SwipesMade", fields: [swiperId], references: [id], onDelete: Cascade)
+  swiped User  @relation("SwipesReceived", fields: [swipedId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, swiperId, swipedId])
+  @@index([eventId, swiperId])
+  @@index([eventId, swipedId])
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  eventId   String
+  userAId   String // lower user id, lexicographically, so the pair is order-independent
+  userBId   String
+  matchedAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userAId, userBId])
+}
+
+// ---------- Teams (skill-slot based, not just 1:1 matches) ----------
+
+model Team {
+  id               String   @id @default(cuid())
+  eventId          String
+  name             String
+  description      String?
+  lookingForSkills String[] @default([])
+  slotsOpen        Int      @default(1)
+  createdById      String
+  createdAt        DateTime @default(now())
+
+  event    Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  requests TeamRequest[]
+}
+
+model TeamRequest {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  status    String   @default("pending") // pending | accepted | declined
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
