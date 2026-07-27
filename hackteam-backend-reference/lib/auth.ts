@@ -45,6 +45,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           orderBy: { createdAt: "desc" },
         });
         if (!record || record.attempts >= MAX_ATTEMPTS) return null;
+        
+        const enteredHash = hashCode(code);
+
+        console.log({
+          email,
+          code,
+          foundRecord: !!record,
+          storedHash: record?.codeHash,
+          enteredHash,
+        });
 
         if (record.codeHash !== hashCode(code)) {
           await prisma.verificationCode.update({
