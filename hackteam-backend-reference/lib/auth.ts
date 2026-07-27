@@ -5,6 +5,7 @@ import { prisma } from "./prisma";
 import { hashCode, MAX_ATTEMPTS } from "./otp";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   adapter: PrismaAdapter(prisma),
   // Credentials provider requires JWT sessions — NextAuth doesn't support
   // database sessions for it, since there's no OAuth round-trip to persist.
@@ -69,34 +70,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
 
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) token.id = user.id;
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     if (session.user) session.user.id = token.id as string;
-  //     return session;
-  //   },
-  // },
-
-  /*Comitted the above code coz by default after login it says "Login successful. Redirect user to my homepage."
-  And since this is backend its homepage is Location: http://localhost:3000/ [this would not have been the case if both front and backend was in same file then both of there homepage would have been same and ridirect would take to the right page but since frontend is in diff folder its url is diff so we mention the diff url in below code]
- */
-
   callbacks: {
-      async redirect() {
-      return process.env.FRONTEND_URL ?? "http://localhost:5173";
-      },
-
-     async jwt({ token, user }) {
-       if (user) token.id = user.id;
-       return token;
-     },
-     async session({ session, token }) {
-       if (session.user) session.user.id = token.id as string;
-       return session;
-     },
-   },
-
+    async jwt({ token, user }) {
+      if (user) token.id = user.id;
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) session.user.id = token.id as string;
+      return session;
+    },
+  },
 });
