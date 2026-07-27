@@ -16,6 +16,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // session cookie has to be readable across subdomains of the same
   // parent domain. Set AUTH_COOKIE_DOMAIN to e.g. ".yourdomain.com" in
   // production (leave unset for local dev on a single origin).
+
+
+  cookies: {
+  csrfToken: {
+    name: "authjs.csrf-token",
+    options: {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      path: "/",
+    },
+  },
+
+  sessionToken: {
+    name: "authjs.session-token",
+    options: {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      path: "/",
+    },
+  },
+},
+
+  /*
   cookies: {
     sessionToken: {
       options: {
@@ -26,7 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         domain: process.env.AUTH_COOKIE_DOMAIN,
       },
     },
-  },
+  },*/
 
   providers: [
     Credentials({
