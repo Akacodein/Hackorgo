@@ -169,18 +169,13 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({
-      csrfToken,
-      json: "true",
-    }),
+    body: new URLSearchParams({ csrfToken, json: "true" }),
   });
 
-  // Auth.js returns the OAuth destination without us following
-  // the redirect through fetch().
-  const data = await res.json().catch(() => null);
+  const location = res.headers.get("location");
 
-  if (data?.url) {
-    window.location.href = data.url;
+  if (location) {
+    window.location.href = location;
     return;
   }
 
