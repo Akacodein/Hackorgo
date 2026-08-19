@@ -160,7 +160,21 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
     return;
   }
 
-  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
+  const csrfToken = await getCsrfToken();
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = `${API_BASE}/api/auth/signin/${provider}`;
+  form.style.display = "none";
+
+  const csrfInput = document.createElement("input");
+  csrfInput.type = "hidden";
+  csrfInput.name = "csrfToken";
+  csrfInput.value = csrfToken;
+  form.appendChild(csrfInput);
+
+  document.body.appendChild(form);
+  form.submit();
 }
 
 // export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
