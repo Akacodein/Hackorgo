@@ -160,9 +160,31 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
     return;
   }
 
-  // Start OAuth with a normal browser navigation.
-  // Do NOT use fetch() here because Google OAuth is a browser redirect flow.
-  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
+  const csrfToken = await getCsrfToken();
+
+  const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
+    method: "POST",
+    credentials: "include",
+    redirect: "manual",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      csrfToken,
+      json: "true",
+    }),
+  });
+
+  // Auth.js returns the OAuth destination without us following
+  // the redirect through fetch().
+  const data = await res.json().catch(() => null);
+
+  if (data?.url) {
+    window.location.href = data.url;
+    return;
+  }
+
+  throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
 }
 
 // export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
