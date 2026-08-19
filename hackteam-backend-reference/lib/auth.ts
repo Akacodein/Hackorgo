@@ -53,7 +53,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Google/GitHub need no clientId/clientSecret here — Auth.js reads
     // AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET and AUTH_GITHUB_ID/AUTH_GITHUB_SECRET
     // automatically. Nothing to configure beyond the .env values.
-    Google,
+    Google({
+        allowDangerousEmailAccountLinking: true,
+    }),
     GitHub,
     Credentials({
       name: "Email code",
