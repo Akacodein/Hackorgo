@@ -146,26 +146,45 @@ export type OAuthProvider = "google" | "github";
 // provider's authorization URL as JSON instead of a redirect, which we
 // then navigate to ourselves. It comes back to app/auth/bridge on the
 // backend, which hands the frontend a token the same way email/code does.
+
 export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
   if (DEMO_MODE) {
     await new Promise((r) => setTimeout(r, 500));
-    demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+    demoSession = {
+      user: {
+        id: "demo-user",
+        name: `Demo via ${provider}`,
+        email: `demo@${provider}.example`,
+      },
+    };
     return;
   }
-  const csrfToken = await getCsrfToken();
-  const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ csrfToken, json: "true" }),
-  });
-  const data = await res.json().catch(() => null);
-  if (data?.url) {
-    window.location.href = data.url;
-  } else {
-    throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
-  }
+
+  // Start OAuth with a normal browser navigation.
+  // Do NOT use fetch() here because Google OAuth is a browser redirect flow.
+  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
 }
+
+// export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
+//   if (DEMO_MODE) {
+//     await new Promise((r) => setTimeout(r, 500));
+//     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+//     return;
+//   }
+//   const csrfToken = await getCsrfToken();
+//   const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
+//     method: "POST",
+//     credentials: "include",
+//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//     body: new URLSearchParams({ csrfToken, json: "true" }),
+//   });
+//   const data = await res.json().catch(() => null);
+//   if (data?.url) {
+//     window.location.href = data.url;
+//   } else {
+//     throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
+//   }
+// }
 
 export interface Session {
   user?: { id: string; name: string; email: string };
