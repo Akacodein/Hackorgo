@@ -160,26 +160,7 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
     return;
   }
 
-  const csrfToken = await getCsrfToken();
-
-  const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
-    method: "POST",
-    credentials: "include",
-    redirect: "manual",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ csrfToken, json: "true" }),
-  });
-
-  const location = res.headers.get("location");
-
-  if (location) {
-    window.location.href = location;
-    return;
-  }
-
-  throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
+  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
 }
 
 // export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
