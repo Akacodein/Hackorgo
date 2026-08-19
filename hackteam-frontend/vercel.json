@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://hackorgo.onrender.com/api/:path*"
+      "destination": "https://hackorgoo.onrender.com/api/:path*"
     }
   ]
 }
