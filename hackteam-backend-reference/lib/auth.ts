@@ -10,13 +10,13 @@ import { generateUniqueUsername } from "./username";
 
 const trustHost = true;
 
-const isProd = process.env.NODE_ENV === "production";
-const crossSiteCookie = {
-  httpOnly: true,
-  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
-  secure: isProd,
-  path: "/",
-};
+// const isProd = process.env.NODE_ENV === "production";
+// const crossSiteCookie = {
+//   httpOnly: true,
+//   sameSite: (isProd ? "none" : "lax") as "none" | "lax",
+//   secure: isProd,
+//   path: "/",
+// };
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -26,14 +26,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
 
-  cookies: {
-    sessionToken: { options: { ...crossSiteCookie, domain: process.env.AUTH_COOKIE_DOMAIN } },
-    csrfToken: { options: crossSiteCookie },
-    callbackUrl: { options: crossSiteCookie },
-    state: { options: crossSiteCookie },
-    nonce: { options: crossSiteCookie },
-    pkceCodeVerifier: { options: crossSiteCookie },
-  },
+  // cookies: {
+  //   sessionToken: { options: { ...crossSiteCookie, domain: process.env.AUTH_COOKIE_DOMAIN } },
+  //   csrfToken: { options: crossSiteCookie },
+  //   callbackUrl: { options: crossSiteCookie },
+  //   state: { options: crossSiteCookie },
+  //   nonce: { options: crossSiteCookie },
+  //   pkceCodeVerifier: { options: crossSiteCookie },
+  // },
 
   providers: [
     // Google/GitHub need no clientId/clientSecret here — Auth.js reads
