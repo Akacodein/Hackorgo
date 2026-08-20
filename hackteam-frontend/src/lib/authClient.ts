@@ -26,7 +26,8 @@
 // "" (empty string)   -> same-origin, relative /api/... calls (via vercel.json proxy)
 // "https://..."       -> a genuinely separate backend origin
 const RAW_API_BASE = import.meta.env.VITE_API_BASE_URL as string | undefined;
-const DEMO_MODE = RAW_API_BASE === undefined;
+const DEMO_MODE = false;
+//const DEMO_MODE = RAW_API_BASE === undefined; // this ensures that if vITE_API_BASE_URL is not there then it shows a demo mode
 const API_BASE = RAW_API_BASE ?? "";
 
 const TOKEN_KEY = "crew.authToken";
