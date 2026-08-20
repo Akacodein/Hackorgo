@@ -141,56 +141,56 @@ export async function verifyCode(email: string, code: string): Promise<VerifyCod
 export type OAuthProvider = "google" | "github";
 
 
-export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
-  if (DEMO_MODE) {
-    await new Promise((r) => setTimeout(r, 500));
-    demoSession = {
-      user: {
-        id: "demo-user",
-        name: `Demo via ${provider}`,
-        email: `demo@${provider}.example`,
-      },
-    };
-    return;
-  }
-
-  const csrfToken = await getCsrfToken();
-
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = `${API_BASE}/api/auth/signin/${provider}`;
-  form.style.display = "none";
-
-  const csrfInput = document.createElement("input");
-  csrfInput.type = "hidden";
-  csrfInput.name = "csrfToken";
-  csrfInput.value = csrfToken;
-  form.appendChild(csrfInput);
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
 // export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
 //   if (DEMO_MODE) {
 //     await new Promise((r) => setTimeout(r, 500));
-//     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+//     demoSession = {
+//       user: {
+//         id: "demo-user",
+//         name: `Demo via ${provider}`,
+//         email: `demo@${provider}.example`,
+//       },
+//     };
 //     return;
 //   }
+
 //   const csrfToken = await getCsrfToken();
-//   const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
-//     method: "POST",
-//     credentials: "include",
-//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//     body: new URLSearchParams({ csrfToken, json: "true" }),
-//   });
-//   const data = await res.json().catch(() => null);
-//   if (data?.url) {
-//     window.location.href = data.url;
-//   } else {
-//     throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
-//   }
+
+//   const form = document.createElement("form");
+//   form.method = "POST";
+//   form.action = `${API_BASE}/api/auth/signin/${provider}`;
+//   form.style.display = "none";
+
+//   const csrfInput = document.createElement("input");
+//   csrfInput.type = "hidden";
+//   csrfInput.name = "csrfToken";
+//   csrfInput.value = csrfToken;
+//   form.appendChild(csrfInput);
+
+//   document.body.appendChild(form);
+//   form.submit();
 // }
+
+export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
+  if (DEMO_MODE) {
+    await new Promise((r) => setTimeout(r, 500));
+    demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+    return;
+  }
+  const csrfToken = await getCsrfToken();
+  const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ csrfToken, json: "true" }),
+  });
+  const data = await res.json().catch(() => null);
+  if (data?.url) {
+    window.location.href = data.url;
+  } else {
+    throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
+  }
+}
 
 export interface Session {
   user?: { id: string; name: string; email: string };
