@@ -179,7 +179,7 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
 //   }
 
   window.location.href =
-  `https://hackorgoo.onrender.com/api/auth/signin/${provider}`;
+  `https://hackorgoo.onrender.com/api/signin/${provider}`;
   // const csrfToken = await getCsrfToken();
   // const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
   //   method: "POST",
