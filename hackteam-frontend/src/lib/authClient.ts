@@ -141,18 +141,18 @@ export async function verifyCode(email: string, code: string): Promise<VerifyCod
 export type OAuthProvider = "google" | "github";
 
 
-// export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
-//   if (DEMO_MODE) {
-//     await new Promise((r) => setTimeout(r, 500));
-//     demoSession = {
-//       user: {
-//         id: "demo-user",
-//         name: `Demo via ${provider}`,
-//         email: `demo@${provider}.example`,
-//       },
-//     };
-//     return;
-//   }
+export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
+  if (DEMO_MODE) {
+    await new Promise((r) => setTimeout(r, 500));
+    demoSession = {
+      user: {
+        id: "demo-user",
+        name: `Demo via ${provider}`,
+        email: `demo@${provider}.example`,
+      },
+    };
+    return;
+  }
 
 //   const csrfToken = await getCsrfToken();
 
@@ -171,14 +171,15 @@ export type OAuthProvider = "google" | "github";
 //   form.submit();
 // }
 
-export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
-  if (DEMO_MODE) {
-    await new Promise((r) => setTimeout(r, 500));
-    demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
-    return;
-  }
+// : Promise<void> {
+//   if (DEMO_MODE) {
+//     await new Promise((r) => setTimeout(r, 500));
+//     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+//     return;
+//   }
 
-  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
+  window.location.href =
+  `https://hackorgoo.onrender.com/api/auth/signin/${provider}`;
   // const csrfToken = await getCsrfToken();
   // const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
   //   method: "POST",

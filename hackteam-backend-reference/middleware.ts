@@ -1,11 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 // Comma-separated list, e.g. "https://app.yourdomain.com,http://localhost:5173"
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ?? "").split(",").map((o) => o.trim());
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 export function middleware(req: NextRequest) {
   const origin = req.headers.get("origin") ?? "";
-  const isAllowed = ALLOWED_ORIGINS.includes(origin);
+  const isAllowed = ALLOWED_ORIGINS.includes(origin.replace(/\/$/, ""));
 
   if (req.method === "OPTIONS") {
     const res = new NextResponse(null, { status: 204 });

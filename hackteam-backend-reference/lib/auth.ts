@@ -24,7 +24,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Credentials provider requires JWT sessions — NextAuth doesn't support
   // database sessions for it, since there's no OAuth round-trip to persist.
   session: { strategy: "jwt" },
-  pages: { signIn: "/login" },
+
+//   cookies: {
+//   pkceCodeVerifier: {
+//     name: "authjs.pkce.code_verifier",
+//     options: {
+//       httpOnly: true,
+//       sameSite: "lax",
+//       path: "/",
+//       secure: true,
+//     },
+//   },
+// },
+
+    pages: {
+      signIn: `${process.env.FRONTEND_URL}/login`,
+    },
+ 
+
+  //pages: { signIn: "/login" },// it assumes that the login page is in backend but it is not
+
+  
 
   // cookies: {
   //   sessionToken: { options: { ...crossSiteCookie, domain: process.env.AUTH_COOKIE_DOMAIN } },
@@ -40,6 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // AUTH_GOOGLE_ID/AUTH_GOOGLE_SECRET and AUTH_GITHUB_ID/AUTH_GITHUB_SECRET
     Google({
         allowDangerousEmailAccountLinking: true,
+      
     }),
     GitHub,
     Credentials({
