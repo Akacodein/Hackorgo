@@ -34,7 +34,7 @@ export default function InviteLanding({
               onClick={onContinue}
               className="w-full rounded-xl bg-brand text-brand-ink py-3 font-medium"
             >
-              Continue to Crew
+              Continue to Jabo
             </button>
           </>
         )}

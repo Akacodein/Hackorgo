@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Crew API",
-  description: "Backend for the Crew teammate-matching app.",
+  title: "Jabo API",
+  description: "Backend for the Jabo teammate-matching app.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

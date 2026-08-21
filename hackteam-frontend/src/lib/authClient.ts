@@ -30,7 +30,7 @@ const DEMO_MODE = false;
 //const DEMO_MODE = RAW_API_BASE === undefined; // this ensures that if vITE_API_BASE_URL is not there then it shows a demo mode
 const API_BASE = RAW_API_BASE ?? "";
 
-const TOKEN_KEY = "crew.authToken";
+const TOKEN_KEY = "Jabo.authToken";
 
 function getToken(): string | null {
   try {
@@ -154,32 +154,32 @@ export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
     return;
   }
 
-//   const csrfToken = await getCsrfToken();
+  //   const csrfToken = await getCsrfToken();
 
-//   const form = document.createElement("form");
-//   form.method = "POST";
-//   form.action = `${API_BASE}/api/auth/signin/${provider}`;
-//   form.style.display = "none";
+  //   const form = document.createElement("form");
+  //   form.method = "POST";
+  //   form.action = `${API_BASE}/api/auth/signin/${provider}`;
+  //   form.style.display = "none";
 
-//   const csrfInput = document.createElement("input");
-//   csrfInput.type = "hidden";
-//   csrfInput.name = "csrfToken";
-//   csrfInput.value = csrfToken;
-//   form.appendChild(csrfInput);
+  //   const csrfInput = document.createElement("input");
+  //   csrfInput.type = "hidden";
+  //   csrfInput.name = "csrfToken";
+  //   csrfInput.value = csrfToken;
+  //   form.appendChild(csrfInput);
 
-//   document.body.appendChild(form);
-//   form.submit();
-// }
+  //   document.body.appendChild(form);
+  //   form.submit();
+  // }
 
-// : Promise<void> {
-//   if (DEMO_MODE) {
-//     await new Promise((r) => setTimeout(r, 500));
-//     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
-//     return;
-//   }
+  // : Promise<void> {
+  //   if (DEMO_MODE) {
+  //     await new Promise((r) => setTimeout(r, 500));
+  //     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+  //     return;
+  //   }
 
   window.location.href =
-  `https://hackorgoo.onrender.com/api/signin/${provider}`;
+    `https://hackorgoo.onrender.com/api/signin/${provider}`;
   // const csrfToken = await getCsrfToken();
   // const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
   //   method: "POST",

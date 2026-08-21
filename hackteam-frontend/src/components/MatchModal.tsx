@@ -14,7 +14,7 @@ export default function MatchModal({
   const message = encodeURIComponent(
     `Hey ${candidate.name}! We both want to team up for ${event.name} — saw you're a ${TIER_LABEL[
       candidate.tier
-    ].toLowerCase()} match on Crew. Want to team up?`
+    ].toLowerCase()} match on Jabo. Want to team up?`
   );
   // In production this opens a real number once both sides share contact,
   // or falls back to an in-app thread — see note in App.tsx.

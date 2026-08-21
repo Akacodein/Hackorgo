@@ -34,12 +34,12 @@ function transporter() {
 
 export async function sendVerificationCodeEmail(email: string, code: string) {
   await transporter().sendMail({
-    from: `Crew <${process.env.GMAIL_USER}>`,
+    from: `Jabo <${process.env.GMAIL_USER}>`,
     to: email,
-    subject: `${code} is your Crew verification code`,
+    subject: `${code} is your Jabo verification code`,
     html: `
       <div style="font-family: sans-serif; max-width: 420px; margin: 0 auto;">
-        <p style="font-size: 14px; color: #5b5d6e;">Your Crew verification code</p>
+        <p style="font-size: 14px; color: #5b5d6e;">Your Jabo verification code</p>
         <p style="font-size: 32px; font-weight: 700; letter-spacing: 6px; margin: 8px 0 16px;">
           ${code}
         </p>

@@ -9,12 +9,12 @@ function client() {
 
 export async function sendVerificationCodeEmail(email: string, code: string) {
   const { error } = await client().emails.send({
-    from: process.env.RESEND_FROM ?? "Crew <onboarding@resend.dev>",
+    from: process.env.RESEND_FROM ?? "Jabo <onboarding@resend.dev>",
     to: email,
-    subject: `${code} is your Crew verification code`,
+    subject: `${code} is your Jabo verification code`,
     html: `
       <div style="font-family: sans-serif; max-width: 420px; margin: 0 auto;">
-        <p style="font-size: 14px; color: #5b5d6e;">Your Crew verification code</p>
+        <p style="font-size: 14px; color: #5b5d6e;">Your Jabo verification code</p>
         <p style="font-size: 32px; font-weight: 700; letter-spacing: 6px; margin: 8px 0 16px;">
           ${code}
         </p>
