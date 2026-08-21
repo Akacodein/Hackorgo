@@ -139,6 +139,13 @@ export async function verifyCode(email: string, code: string): Promise<VerifyCod
 
 export type OAuthProvider = "google" | "github";
 
+// OAuth needs a real page navigation (Google/GitHub's consent screens
+// aren't something you fetch), so this can't be fetch-and-check like
+// verifyCode. Auth.js still requires the sign-in POST to carry a CSRF
+// token even for OAuth providers — `json=true` asks it to hand back the
+// provider's authorization URL as JSON instead of a redirect, which we
+// then navigate to ourselves. It comes back to app/auth/bridge on the
+// backend, which hands the frontend a token the same way email/code does.
 
 export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
   if (DEMO_MODE) {

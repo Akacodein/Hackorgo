@@ -11,6 +11,7 @@ export default function UsernameField({
 }: {
   value: string;
   onChange: (v: string) => void;
+  // Skip the "taken" check against yourself — you already own this one.
   currentUsername?: string | null;
 }) {
   const [status, setStatus] = useState<Status>("idle");

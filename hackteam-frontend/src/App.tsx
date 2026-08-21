@@ -84,6 +84,9 @@ export default function App() {
         else await resolveInviteOrGoHome();
       }
     } catch {
+      // Stored token turned out to be invalid/expired — authedFetch
+      // already cleared it. Don't leave the screen blank, just ask
+      // them to sign in again instead of failing silently.
       setPhase(inviteEventId ? "inviteLanding" : "auth");
     }
   };
