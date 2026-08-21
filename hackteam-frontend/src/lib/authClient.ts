@@ -26,7 +26,8 @@
 // "" (empty string)   -> same-origin, relative /api/... calls (via vercel.json proxy)
 // "https://..."       -> a genuinely separate backend origin
 const RAW_API_BASE = import.meta.env.VITE_API_BASE_URL as string | undefined;
-const DEMO_MODE = RAW_API_BASE === undefined;
+const DEMO_MODE = false;
+//const DEMO_MODE = RAW_API_BASE === undefined; // this ensures that if vITE_API_BASE_URL is not there then it shows a demo mode
 const API_BASE = RAW_API_BASE ?? "";
 
 const TOKEN_KEY = "crew.authToken";
@@ -139,64 +140,59 @@ export async function verifyCode(email: string, code: string): Promise<VerifyCod
 
 export type OAuthProvider = "google" | "github";
 
-// OAuth needs a real page navigation (Google/GitHub's consent screens
-// aren't something you fetch), so this can't be fetch-and-check like
-// verifyCode. Auth.js still requires the sign-in POST to carry a CSRF
-// token even for OAuth providers — `json=true` asks it to hand back the
-// provider's authorization URL as JSON instead of a redirect, which we
-// then navigate to ourselves. It comes back to app/auth/bridge on the
-// backend, which hands the frontend a token the same way email/code does.
-
-export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
-  if (DEMO_MODE) {
-    await new Promise((r) => setTimeout(r, 500));
-    demoSession = {
-      user: {
-        id: "demo-user",
-        name: `Demo via ${provider}`,
-        email: `demo@${provider}.example`,
-      },
-    };
-    return;
-  }
-
-  const csrfToken = await getCsrfToken();
-
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = `${API_BASE}/api/auth/signin/${provider}`;
-  form.style.display = "none";
-
-  const csrfInput = document.createElement("input");
-  csrfInput.type = "hidden";
-  csrfInput.name = "csrfToken";
-  csrfInput.value = csrfToken;
-  form.appendChild(csrfInput);
-
-  document.body.appendChild(form);
-  form.submit();
-}
 
 // export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
 //   if (DEMO_MODE) {
 //     await new Promise((r) => setTimeout(r, 500));
-//     demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+//     demoSession = {
+//       user: {
+//         id: "demo-user",
+//         name: `Demo via ${provider}`,
+//         email: `demo@${provider}.example`,
+//       },
+//     };
 //     return;
 //   }
+
 //   const csrfToken = await getCsrfToken();
-//   const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
-//     method: "POST",
-//     credentials: "include",
-//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//     body: new URLSearchParams({ csrfToken, json: "true" }),
-//   });
-//   const data = await res.json().catch(() => null);
-//   if (data?.url) {
-//     window.location.href = data.url;
-//   } else {
-//     throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
-//   }
+
+//   const form = document.createElement("form");
+//   form.method = "POST";
+//   form.action = `${API_BASE}/api/auth/signin/${provider}`;
+//   form.style.display = "none";
+
+//   const csrfInput = document.createElement("input");
+//   csrfInput.type = "hidden";
+//   csrfInput.name = "csrfToken";
+//   csrfInput.value = csrfToken;
+//   form.appendChild(csrfInput);
+
+//   document.body.appendChild(form);
+//   form.submit();
 // }
+
+export async function signInWithOAuth(provider: OAuthProvider): Promise<void> {
+  if (DEMO_MODE) {
+    await new Promise((r) => setTimeout(r, 500));
+    demoSession = { user: { id: "demo-user", name: `Demo via ${provider}`, email: `demo@${provider}.example` } };
+    return;
+  }
+
+  window.location.href = `${API_BASE}/api/auth/signin/${provider}`;
+  // const csrfToken = await getCsrfToken();
+  // const res = await fetch(`${API_BASE}/api/auth/signin/${provider}?json=true`, {
+  //   method: "POST",
+  //   credentials: "include",
+  //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  //   body: new URLSearchParams({ csrfToken, json: "true" }),
+  // });
+  // const data = await res.json().catch(() => null);
+  // if (data?.url) {
+  //   window.location.href = data.url;
+  // } else {
+  //   throw new Error(`Couldn't start ${provider} sign-in. Try again.`);
+  // }
+}
 
 export interface Session {
   user?: { id: string; name: string; email: string };
