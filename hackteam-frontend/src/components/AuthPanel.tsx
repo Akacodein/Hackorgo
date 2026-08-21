@@ -22,7 +22,7 @@ export default function AuthPanel({ onVerified }: { onVerified: () => void }) {
       // Real mode: signInWithOAuth already navigated the whole page away
       // to Google/GitHub, so nothing below this line meaningfully runs.
       // Demo mode: it just sets an in-memory session and returns.
-      //onVerified();
+      onVerified();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
       setOauthLoading(null);
