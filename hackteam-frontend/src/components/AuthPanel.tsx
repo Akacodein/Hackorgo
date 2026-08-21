@@ -71,7 +71,7 @@ export default function AuthPanel({ onVerified }: { onVerified: () => void }) {
 
       {step === "start" ? (
         <>
-          <h1 className="font-display text-2xl mb-1">Sign in to Jabo</h1>
+          <h1 className="text-2xl font-semibold mb-1">Sign in to Jabo</h1>          {/* <h1 className="font-display text-2xl mb-1">Sign in to Jabo</h1> */}
           <p className="text-sm text-ink-soft mb-6">Find teammates for the events you're going to.</p>
 
           <button
